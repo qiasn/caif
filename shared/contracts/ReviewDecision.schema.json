@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qiassoc.org/caif/contracts/ReviewDecision.schema.json",
+  "title": "ReviewDecision",
+  "description": "Canonical record of a human or authorized review decision.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "review_id": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "subject_id": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identifier of the object, claim, workflow, or decision being reviewed."
+    },
+
+    "reviewer_role": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "decision": {
+      "type": "string",
+      "enum": [
+        "approved",
+        "approved_with_conditions",
+        "rejected",
+        "needs_revision",
+        "deferred"
+      ]
+    },
+
+    "comments": {
+      "type": ["string", "null"]
+    },
+
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "reviewed_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+
+  "required": [
+    "schema_version",
+    "review_id",
+    "subject_id",
+    "reviewer_role",
+    "decision"
+  ]
+}

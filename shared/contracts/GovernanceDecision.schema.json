@@ -1,0 +1,73 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qiassoc.org/caif/contracts/GovernanceDecision.schema.json",
+  "title": "GovernanceDecision",
+  "description": "Canonical result of applying CAIF governance policy to an operation or information object.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "decision_id": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "status": {
+      "type": "string",
+      "enum": [
+        "allow",
+        "allow_with_conditions",
+        "deny",
+        "review_required"
+      ]
+    },
+
+    "policy_id": {
+      "type": ["string", "null"]
+    },
+
+    "reason": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "conditions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+
+    "human_review_required": {
+      "type": "boolean"
+    },
+
+    "review_role": {
+      "type": ["string", "null"],
+      "description": "Role required for review, such as pastor, elder, ministry owner, or administrator."
+    },
+
+    "decided_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+
+  "required": [
+    "schema_version",
+    "decision_id",
+    "status",
+    "reason",
+    "human_review_required"
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qiassoc.org/caif/contracts/Citation.schema.json",
+  "title": "Citation",
+  "description": "Canonical CAIF citation identifying evidence or source material.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "source_id": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "source_type": {
+      "type": "string",
+      "enum": [
+        "document",
+        "web",
+        "scripture",
+        "sermon",
+        "meeting_record",
+        "database_record",
+        "audio",
+        "video",
+        "other"
+      ]
+    },
+
+    "title": {
+      "type": ["string", "null"]
+    },
+
+    "author": {
+      "type": ["string", "null"]
+    },
+
+    "location": {
+      "type": ["string", "null"],
+      "description": "Page, section, verse, timestamp, record identifier, or similar locator."
+    },
+
+    "uri": {
+      "type": ["string", "null"]
+    },
+
+    "quoted_text": {
+      "type": ["string", "null"]
+    },
+
+    "retrieved_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+
+  "required": [
+    "schema_version",
+    "source_id",
+    "source_type"
+  ]
+}

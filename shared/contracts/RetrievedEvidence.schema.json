@@ -1,0 +1,101 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://qiassoc.org/caif/contracts/RetrievedEvidence.schema.json",
+  "title": "RetrievedEvidence",
+  "description": "Canonical evidence object returned by CAIF retrieval capabilities.",
+  "type": "object",
+  "additionalProperties": false,
+
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+
+    "evidence_id": {
+      "type": "string",
+      "minLength": 1
+    },
+
+    "content": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Evidence content retrieved from the source."
+    },
+
+    "citation": {
+      "$ref": "Citation.schema.json"
+    },
+
+    "relevance_score": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+
+    "confidence": {
+      "type": ["number", "null"],
+      "minimum": 0,
+      "maximum": 1
+    },
+
+    "provenance_status": {
+      "type": "string",
+      "enum": [
+        "verified_source",
+        "known_source",
+        "unverified_source",
+        "generated",
+        "unknown"
+      ]
+    },
+
+    "trust_status": {
+      "type": "string",
+      "enum": [
+        "trusted",
+        "reviewed",
+        "unverified",
+        "disputed",
+        "restricted",
+        "rejected"
+      ]
+    },
+
+    "access_classification": {
+      "type": "string",
+      "enum": [
+        "public",
+        "internal",
+        "confidential",
+        "pastoral_private",
+        "restricted"
+      ]
+    },
+
+    "retrieval_method": {
+      "type": ["string", "null"],
+      "description": "Descriptive retrieval method; not part of semantic identity."
+    },
+
+    "retrieved_at": {
+      "type": ["string", "null"],
+      "format": "date-time"
+    },
+
+    "extensions": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+
+  "required": [
+    "schema_version",
+    "evidence_id",
+    "content",
+    "citation",
+    "provenance_status",
+    "trust_status",
+    "access_classification"
+  ]
+}
