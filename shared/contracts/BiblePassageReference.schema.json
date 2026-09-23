@@ -2,77 +2,105 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://qiassoc.org/caif/contracts/BiblePassageReference.schema.json",
   "title": "BiblePassageReference",
-  "description": "Canonical CAIF representation of a reference to a Biblical passage.",
+  "description": "A successfully normalized reference to exactly one contiguous inclusive passage within one Biblical book. Structural validation does not establish Bible-domain validity.",
   "type": "object",
   "additionalProperties": false,
-
   "properties": {
     "schema_version": {
       "type": "string",
       "const": "1.0"
     },
-
     "book": {
       "type": "string",
       "minLength": 1,
       "description": "Canonical book name."
     },
-
-    "chapter": {
-      "type": "integer",
-      "minimum": 1
-    },
-
     "verse_start": {
-      "type": ["integer", "null"],
-      "minimum": 1
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "description": "Inclusive starting verse. Both verse endpoints must be integers or both null; null means complete chapter(s), never an unknown or inferred verse."
     },
-
     "verse_end": {
-      "type": ["integer", "null"],
-      "minimum": 1
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 1,
+      "description": "Inclusive ending verse in chapter_end; equal to verse_start for a single verse. Null only when verse_start is also null."
     },
-
     "chapter_start": {
-      "type": ["integer", "null"],
-      "minimum": 1
+      "type": "integer",
+      "minimum": 1,
+      "description": "Inclusive starting chapter; repeated as chapter_end for a single chapter."
     },
-
     "chapter_end": {
-      "type": ["integer", "null"],
-      "minimum": 1
+      "type": "integer",
+      "minimum": 1,
+      "description": "Inclusive ending chapter."
     },
-
     "original_text": {
-      "type": ["string", "null"],
-      "description": "Original textual form before normalization."
+      "type": "string",
+      "description": "The supplied reference preserved exactly, including whitespace, punctuation, and Unicode characters."
     },
-
     "language": {
-      "type": ["string", "null"],
+      "type": [
+        "string",
+        "null"
+      ],
       "description": "Language of the original reference when known."
     },
-
     "canon_profile": {
-      "type": ["string", "null"],
-      "description": "Canon profile when relevant to book identity or numbering."
+      "type": [
+        "string",
+        "null"
+      ],
+      "description": "Canon and numbering convention. For P0 v0.1, the Protestant 66-book canon and numbering convention used by the P0 reference data. A separate numbering profile may be added in a future contract revision."
     },
-
     "confidence": {
-      "type": ["number", "null"],
+      "type": [
+        "number",
+        "null"
+      ],
       "minimum": 0,
       "maximum": 1
     },
-
     "extensions": {
       "type": "object",
       "additionalProperties": true
     }
   },
-
   "required": [
     "schema_version",
     "book",
-    "chapter"
+    "chapter_start",
+    "verse_start",
+    "chapter_end",
+    "verse_end",
+    "original_text"
+  ],
+  "oneOf": [
+    {
+      "properties": {
+        "verse_start": {
+          "type": "null"
+        },
+        "verse_end": {
+          "type": "null"
+        }
+      }
+    },
+    {
+      "properties": {
+        "verse_start": {
+          "type": "integer"
+        },
+        "verse_end": {
+          "type": "integer"
+        }
+      }
+    }
   ]
 }

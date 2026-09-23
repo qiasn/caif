@@ -120,7 +120,11 @@ If language is not supplied, an implementation MAY detect the
 language from the input.
 
 `canon_profile`, when omitted in Version 0.1, SHALL default to the
-supported Protestant 66-book canon profile.
+supported Protestant 66-book canon profile and the numbering convention
+used by the P0 reference data. For P0 v0.1, `canon_profile` covers both
+canon membership and that numbering convention. No separate
+`numbering_profile` is defined yet; a future contract revision MAY add
+one without changing the meaning of existing coordinates.
 
 `surrounding_text` MAY be used to assist recognition or ambiguity
 detection but MUST NOT be used to invent a Biblical reference that
@@ -137,34 +141,140 @@ The output MUST conform to the applicable CAIF contract located at:
 
     shared/contracts/BiblePassageReference.schema.json
 
-The canonical representation MUST be capable of expressing:
+`BiblePassageReference` represents only a successfully normalized
+reference to exactly one contiguous inclusive passage within one book.
+It MUST NOT contain ambiguity, error, or status fields. Non-success
+outcomes are handled separately; no normalization-result contract is
+introduced in this draft. Optional confidence metadata MUST NOT be used
+to disguise unresolved ambiguity as success.
 
-- a whole chapter;
-- a single verse;
-- a verse range;
-- a chapter range;
-- the original textual reference;
-- language when known;
-- canon profile when applicable;
-- normalization confidence or ambiguity status when applicable.
+### Canonical Coordinates
 
-Example input:
+Every successful object MUST contain `schema_version`, `book`,
+`chapter_start`, `verse_start`, `chapter_end`, `verse_end`, and
+`original_text`.
 
-    Jn 3:16-18
+- `schema_version` MUST be `"1.0"`.
+- `book` MUST identify a supported canonical book independently of the
+  input language.
+- `chapter_start` and `chapter_end` MUST be positive integers, never null.
+- `verse_start` and `verse_end` MUST both be null or both be positive
+  integers. Neither endpoint may be omitted or mixed with the other form.
+- Null verse endpoints mean complete chapters from `chapter_start`
+  through `chapter_end`, inclusive. Null MUST NOT mean unknown,
+  unspecified, or inferred verses.
+- Integer verse endpoints identify an inclusive passage from
+  (`chapter_start`, `verse_start`) through (`chapter_end`, `verse_end`).
+- A single chapter repeats its chapter number at both endpoints.
+- A single verse repeats both chapter and verse coordinates.
+- `original_text` MUST be a non-null string preserving the supplied
+  reference exactly.
 
-Conceptual normalized result:
+The old `chapter` field is not part of this contract. Language, canon
+profile, confidence, and extensions remain optional metadata.
 
-    {
-      "book": "John",
-      "chapter_start": 3,
-      "chapter_end": 3,
-      "verse_start": 16,
-      "verse_end": 18,
-      "original_text": "Jn 3:16-18"
-    }
+### Validation Responsibilities
 
-The exact JSON representation MUST follow the current canonical
-`BiblePassageReference` schema.
+JSON Schema MUST enforce structural requirements: required fields,
+types, positive coordinate integers, the both-null-or-both-integer verse
+rule, and permitted properties. Schema validity alone does not establish
+a successfully normalized Bible reference.
+
+Capability behavior and tests MUST validate supported canonical-book
+identities, actual chapter and verse existence in the active profile,
+range ordering, and ambiguity. `chapter_start` MUST NOT exceed
+`chapter_end`. When chapters are equal and verse endpoints are integers,
+`verse_start` MUST NOT exceed `verse_end`. Across different chapters, a
+smaller ending verse number is valid if both endpoints exist.
+
+### Canonical Examples
+
+These examples use the default P0 canon and numbering convention and
+omit optional metadata.
+
+`John 3`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "John",
+  "chapter_start": 3,
+  "verse_start": null,
+  "chapter_end": 3,
+  "verse_end": null,
+  "original_text": "John 3"
+}
+```
+
+`John 3:16`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "John",
+  "chapter_start": 3,
+  "verse_start": 16,
+  "chapter_end": 3,
+  "verse_end": 16,
+  "original_text": "John 3:16"
+}
+```
+
+`John 3:16-18`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "John",
+  "chapter_start": 3,
+  "verse_start": 16,
+  "chapter_end": 3,
+  "verse_end": 18,
+  "original_text": "John 3:16-18"
+}
+```
+
+`Genesis 1-3`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "Genesis",
+  "chapter_start": 1,
+  "verse_start": null,
+  "chapter_end": 3,
+  "verse_end": null,
+  "original_text": "Genesis 1-3"
+}
+```
+
+`John 3:16-4:3`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "John",
+  "chapter_start": 3,
+  "verse_start": 16,
+  "chapter_end": 4,
+  "verse_end": 3,
+  "original_text": "John 3:16-4:3"
+}
+```
+
+`Jude 5`
+
+```json
+{
+  "schema_version": "1.0",
+  "book": "Jude",
+  "chapter_start": 1,
+  "verse_start": 5,
+  "chapter_end": 1,
+  "verse_end": 5,
+  "original_text": "Jude 5"
+}
+```
 
 ---
 
@@ -177,7 +287,7 @@ The capability MUST:
    book identity;
 3. identify chapter information;
 4. identify verse information when present;
-5. recognize verse ranges;
+5. recognize verse ranges within and across chapters of one book;
 6. recognize chapter ranges;
 7. preserve the original reference text;
 8. distinguish valid abbreviated forms from ambiguous references;
@@ -210,8 +320,8 @@ verse.
 ## 9. Single-Chapter Books
 
 For a Biblical book containing only one chapter, a single number
-following the book name SHALL normally be interpreted as a verse
-number.
+following the book name without an explicit chapter marker SHALL be
+interpreted as a verse number.
 
 Example:
 
@@ -224,11 +334,15 @@ SHALL normalize to the equivalent of:
 The normalized representation MUST preserve the canonical chapter
 number:
 
-    chapter = 1
-    verse = 5
+    chapter_start = 1
+    verse_start = 5
+    chapter_end = 1
+    verse_end = 5
 
-The same rule SHOULD apply consistently to other supported
-single-chapter Biblical books.
+The same rule MUST apply consistently to all supported single-chapter
+Biblical books, as determined by the active profile. Thus `Jude 1` means
+verse 1; an explicitly marked whole chapter, such as `Jude chapter 1`,
+uses chapter endpoints of 1 and null verse endpoints.
 
 An implementation MUST NOT interpret `Jude 5` as chapter 5 because
 no such chapter exists.
@@ -266,7 +380,7 @@ when the syntax and context indicate a chapter range.
 ## 11. Verse Ranges
 
 The capability MUST support references spanning multiple verses
-within a chapter.
+within a chapter and across chapters of the same book.
 
 Example:
 
@@ -277,7 +391,12 @@ SHALL represent:
     John 3:16 through John 3:18
 
 The normalized output MUST identify the beginning and ending verses
-without losing the chapter identity.
+without losing either endpoint's chapter identity.
+
+`John 3:16-4:3` MUST normalize to `chapter_start = 3`,
+`verse_start = 16`, `chapter_end = 4`, and `verse_end = 3`. It includes
+both endpoints and all intervening verses. The ending verse number is
+not compared to the starting verse number when the chapters differ.
 
 ---
 
@@ -320,7 +439,9 @@ original text.
 
 ## 13. Original Text Preservation
 
-The capability MUST preserve the original user-supplied reference.
+The capability MUST preserve the original user-supplied reference
+exactly, including whitespace, punctuation, and Unicode characters.
+Parsing may normalize a working copy but MUST NOT alter `original_text`.
 
 Example:
 
@@ -328,7 +449,7 @@ Input:
 
     約三16
 
-The canonical object SHOULD contain:
+The canonical object MUST contain:
 
     original_text: "約三16"
 
@@ -406,8 +527,25 @@ The result SHOULD distinguish among conditions such as:
     INSUFFICIENT_INFORMATION
     ERROR
 
-The exact result representation MAY be refined as the implementation
-and canonical contracts mature.
+These conditions describe capability outcomes, not fields of
+`BiblePassageReference`. A non-success outcome MUST NOT be encoded as a
+partial or fabricated canonical reference. Its exact representation is
+deferred; no normalization-result contract is defined here.
+
+The following forms are outside the v0.1 canonical representation unless
+separately resolved by future specifications:
+
+- discontinuous references such as `John 3:16,18`;
+- multiple passages such as `John 3; Romans 8`;
+- cross-book ranges;
+- whole-book-only references such as `John`;
+- open-ended `ff` notation such as `John 3:16ff`;
+- subverse notation such as `John 3:16a`.
+
+The capability MUST NOT silently reinterpret these forms, fill gaps,
+expand whole books, drop subverse qualifiers, or invent endpoints to
+produce a successful object. Unsupported syntax does not by itself mean
+that the intended Biblical passage is invalid.
 
 ---
 
@@ -529,6 +667,12 @@ semantic cases:
     Jn 3:16-18
         → John 3:16-18
 
+    John 3:16-18
+        → John 3:16-18
+
+    John 3:16-4:3
+        → John 3:16 through John 4:3
+
     約三16
         → John 3:16
 
@@ -554,7 +698,15 @@ The evaluation suite MUST also include:
 - nonexistent verses;
 - malformed ranges;
 - ambiguous inputs;
-- unsupported canonical books.
+- unsupported canonical books;
+- all out-of-scope forms listed in Section 15 without silent reinterpretation;
+- exact original-text preservation, including whitespace and Unicode;
+- rejection of missing required fields, the old `chapter` field, null
+  chapter endpoints, nonpositive coordinates, and mixed null/integer
+  verse endpoints by schema validation;
+- rejection of reversed chapter ranges and reversed same-chapter verse
+  ranges by capability validation;
+- all six canonical JSON examples in Section 6 against the schema.
 
 Every corrected normalization defect SHOULD result in a regression
 test.
@@ -570,14 +722,16 @@ Version 0.1 of the capability is acceptable for initial CAIF use when:
 3. supported Chinese book names and abbreviations normalize correctly;
 4. whole-chapter references are distinguished from verse references;
 5. single-chapter books are handled correctly;
-6. chapter ranges are distinguished from verse ranges;
-7. original reference text is preserved;
+6. chapter ranges are distinguished from verse ranges, and cross-chapter
+   verse ranges retain both endpoint coordinates;
+7. original reference text is preserved exactly;
 8. ambiguous references are not silently guessed;
 9. invalid references are not fabricated into valid references;
 10. outputs conform to the canonical
     `BiblePassageReference` contract;
 11. required tests pass;
-12. theological interpretation remains outside the capability.
+12. theological interpretation remains outside the capability;
+13. out-of-scope reference forms are not silently reinterpreted.
 
 ---
 
@@ -599,8 +753,14 @@ Future versions MAY add:
 Such extensions MUST preserve backward compatibility whenever
 practical.
 
-A breaking change to canonical semantics requires an appropriate
-major-version change.
+A breaking change to published canonical semantics requires an
+appropriate major-version change.
+
+Removal of `chapter` and adoption of the required endpoint coordinates
+are corrections to the unpublished P0 draft. The contract retains
+`schema_version: "1.0"`; P0 is not deployed and no backward-compatibility
+adapter is required. Future consumers MUST use the endpoint model rather
+than the removed field.
 
 ---
 
