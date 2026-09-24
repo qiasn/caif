@@ -130,12 +130,17 @@ checkout. No package distribution or CLI is provided yet. Install the runtime
 virtual environment, then run the offline suite:
 
 ```bash
-.venv/bin/python -m pip install -r capabilities/bible-reference-normalization/requirements.txt
+source .venv/bin/activate
+python -m pip install -r capabilities/bible-reference-normalization/requirements.txt
 cd capabilities/bible-reference-normalization
-PYTHONDONTWRITEBYTECODE=1 ../../.venv/bin/python -m pytest -p no:cacheprovider -q
+pytest -v
 ```
 
-With this capability directory on Python's import path:
+Run these shell commands from the repository root. The capability-local
+`pytest.ini` adds the capability directory to the test import path, so both
+`pytest` and `python -m pytest` work without setting `PYTHONPATH`.
+
+For direct Python use, start Python from this capability directory:
 
 ```python
 from bible_reference_normalization import normalize_reference
