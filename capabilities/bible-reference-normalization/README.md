@@ -117,4 +117,59 @@ Bible Reference Normalization is a draft capability, version `0.1.0`,
 with specification version `0.1`. This directory contains the capability
 documentation and approved P0 resources, including the complete 66-book
 structure extracted from pinned SIL data and cross-validated against
-pinned OpenBible `nlt`. Implementation and tests are not yet present.
+pinned OpenBible `nlt`. A first deterministic offline Python implementation
+and pytest suite are present; broader natural-language interpretation and
+invocation adapters remain outside this slice.
+
+
+## Local Python API
+
+Use Python 3.12 (Unicode 15.0.0, matching the alias resource) from a repository
+checkout. No package distribution or CLI is provided yet. Install the runtime
+`jsonschema` dependency and test-only `pytest` dependency into the repository's
+virtual environment, then run the offline suite:
+
+```bash
+.venv/bin/python -m pip install -r capabilities/bible-reference-normalization/requirements.txt
+cd capabilities/bible-reference-normalization
+PYTHONDONTWRITEBYTECODE=1 ../../.venv/bin/python -m pytest -p no:cacheprovider -q
+```
+
+With this capability directory on Python's import path:
+
+```python
+from bible_reference_normalization import normalize_reference
+
+reference = normalize_reference("約三16", language="zh")
+```
+
+`normalize_reference(raw_reference, *, language=None, canon_profile=None)`
+returns a dictionary validated against the existing shared JSON Schema.
+Every success includes the selected `canon_profile`, defaults to the approved
+P0 profile, and preserves `original_text` exactly. The function reads local
+resources on each call. It performs no network access or surrounding-text
+inference and does not infer an output language from shared alias spellings.
+
+The implemented grammar covers Arabic chapter/verse coordinates and ranges,
+explicit English `chapter N` / `chapter N verse(s) N-N`, Chinese chapter and
+verse markers, conventional Chinese numerals from 1 through 199, and the
+approved mixed form `約三16` / `约三16`. Bare single-chapter-book verse ranges
+are not implemented; use explicit coordinates such as `Jude 1:5-7`.
+Non-ASCII punctuation and free-form prose are outside this first grammar.
+
+Failures raise implementation-local subclasses of `NormalizationError`:
+
+- `AmbiguousReference`: multiple supported book candidates or parses remain;
+  callers must request clarification, never select by entry order.
+- `UnsupportedSyntax`: a recognized book has unsupported, incomplete, or
+  deferred syntax, including verse zero. This also covers free-form prose
+  whose intended ambiguity cannot be classified by the deterministic grammar.
+- `InvalidReference`: no accepted book alias, unsupported profile, invalid
+  argument type, nonexistent coordinate, or reversed range.
+- `ResourceConfigurationError`: unavailable, malformed, or inconsistently
+  versioned resources, incompatible runtime Unicode data, or contract failure.
+
+These distinctions are local Python behavior, not a new CAIF result contract.
+They do not exhaustively classify human-language ambiguity. No failure returns
+partial coordinates, a status envelope, or a confidence-based guess. The
+resources and shared contract are unchanged.

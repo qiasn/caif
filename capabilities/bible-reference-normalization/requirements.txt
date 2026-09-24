@@ -1,0 +1,4 @@
+# Runtime contract validation
+jsonschema==4.26.0
+# Offline test suite
+pytest==9.1.1
