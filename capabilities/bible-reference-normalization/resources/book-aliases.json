@@ -1,0 +1,2831 @@
+{
+  "schema_version": "1.0",
+  "data_version": "0.1.0",
+  "matching_normalization": {
+    "steps": [
+      "Apply Unicode NFC to the book token only.",
+      "Collapse runs of ASCII whitespace (U+0009 through U+000D and U+0020) to one U+0020, then trim leading/trailing U+0020.",
+      "For en only, fold ASCII A-Z to a-z."
+    ],
+    "unicode_normalization_version": "15.0.0",
+    "preserve": "Do not remove punctuation, collapse internal spaces to nothing, convert scripts, interpret Roman numerals, or change original_text. Such parser behaviors need separate specification.",
+    "language_selection": "A supplied en, zh-Hant, or zh-Hans selects that tag. A broad zh hint searches both Chinese tags. Unknown language searches all three and unions candidates; identical spellings cannot establish script.",
+    "collision_policy": "Union candidate book_ids for every matching normalized token in eligible languages; deduplicate identical IDs. Candidate order never resolves ambiguity. Multiple candidates require clarification.",
+    "tokenization_boundary": "This table maps complete book tokens only. A parser must use reference grammar and the specification; prefix or longest-string matching alone is not sufficient. Required 約三16 means John 3:16."
+  },
+  "provenance": {
+    "curation": "Conservative CAIF P0 selection of ordinary Protestant full names and abbreviations, checked against pinned OpenBible sources. The broad upstream recognition repertoire, misspellings, and other traditions are not imported wholesale.",
+    "sources": [
+      {
+        "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser",
+        "revision": "1d9deeff18f4c65420747144b3edddafc6747c23",
+        "path": "esm/lang/en.js",
+        "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser/1d9deeff18f4c65420747144b3edddafc6747c23/esm/lang/en.js",
+        "sha256": "abf9081fc08c6240674a1ce337647836f1bd6fb3f19c4c8169b3b3b0b9bf2280"
+      },
+      {
+        "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages",
+        "revision": "5735787d970a87483eac580e5c1d1b5192c3ed48",
+        "path": "data/zho.yaml",
+        "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages/5735787d970a87483eac580e5c1d1b5192c3ed48/data/zho.yaml",
+        "sha256": "8c345e97e840151c02e2a5cddf2a6a7b7b5d50b1aad0af95bb1feac6e5f80168"
+      }
+    ],
+    "licenses": [
+      {
+        "spdx_id": "MIT",
+        "source": {
+          "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser",
+          "revision": "1d9deeff18f4c65420747144b3edddafc6747c23",
+          "path": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser/1d9deeff18f4c65420747144b3edddafc6747c23/LICENSE.md",
+          "sha256": "acce73a6676a119220173325e7aecee4ac8f61f21988b693aa40b472e21c20ae"
+        },
+        "text": "Copyright (c) 2011-2026 Stephen Smith\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      },
+      {
+        "spdx_id": "MIT",
+        "source": {
+          "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages",
+          "revision": "5735787d970a87483eac580e5c1d1b5192c3ed48",
+          "path": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser-Languages/5735787d970a87483eac580e5c1d1b5192c3ed48/LICENSE.md",
+          "sha256": "f786fbe077eb3893720c258a14587e8f1ee6e832954ce07a388b45d6f17668de"
+        },
+        "text": "Copyright (c) 2026 Stephen Smith\r\n\r\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\r\n\r\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\r\n\r\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      }
+    ]
+  },
+  "deferred_aliases": [
+    {
+      "texts": [
+        "約三",
+        "约三"
+      ],
+      "candidate_book_ids": [
+        "3 John"
+      ],
+      "reason": "Not accepted as a book token in P0: conflicts with required 約三16 -> John 3:16. Full Chinese names for 3 John are accepted. A future grammar/semantic decision is required before enabling this shorthand."
+    },
+    {
+      "texts": [
+        "約翰",
+        "约翰"
+      ],
+      "reason": "Removed from initial sketches; bare personal-name forms are deferred pending a deliberate disambiguation policy. Use gospel or epistle full names and the specified abbreviations."
+    }
+  ],
+  "aliases": [
+    {
+      "language": "en",
+      "text": "Genesis",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Gen",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "創世記",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "創",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "创世记",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "创",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Exodus",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Exod",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "出埃及記",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "出",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "出埃及记",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "出",
+      "book_ids": [
+        "Exodus"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Leviticus",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Lev",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "利未記",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "利",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "利未记",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "利",
+      "book_ids": [
+        "Leviticus"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Numbers",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Num",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "民數記",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "民",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "民数记",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "民",
+      "book_ids": [
+        "Numbers"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Deuteronomy",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Deut",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "申命記",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "申",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "申命记",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "申",
+      "book_ids": [
+        "Deuteronomy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Joshua",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Josh",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約書亞記",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "書",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约书亚记",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "书",
+      "book_ids": [
+        "Joshua"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Judges",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Judg",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "士師記",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "士",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "士师记",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "士",
+      "book_ids": [
+        "Judges"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ruth",
+      "book_ids": [
+        "Ruth"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "路得記",
+      "book_ids": [
+        "Ruth"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "得",
+      "book_ids": [
+        "Ruth"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "路得记",
+      "book_ids": [
+        "Ruth"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "得",
+      "book_ids": [
+        "Ruth"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Samuel",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Sam",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "撒母耳記上",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "撒上",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "撒母耳记上",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "撒上",
+      "book_ids": [
+        "1 Samuel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Samuel",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Sam",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "撒母耳記下",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "撒下",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "撒母耳记下",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "撒下",
+      "book_ids": [
+        "2 Samuel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Kings",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Kgs",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "列王紀上",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "王上",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "列王记上",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "王上",
+      "book_ids": [
+        "1 Kings"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Kings",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Kgs",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "列王紀下",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "王下",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "列王记下",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "王下",
+      "book_ids": [
+        "2 Kings"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Chronicles",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Chr",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "歷代志上",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "代上",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "历代志上",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "代上",
+      "book_ids": [
+        "1 Chronicles"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Chronicles",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Chr",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "歷代志下",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "代下",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "历代志下",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "代下",
+      "book_ids": [
+        "2 Chronicles"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ezra",
+      "book_ids": [
+        "Ezra"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "以斯拉記",
+      "book_ids": [
+        "Ezra"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "拉",
+      "book_ids": [
+        "Ezra"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "以斯拉记",
+      "book_ids": [
+        "Ezra"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "拉",
+      "book_ids": [
+        "Ezra"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Nehemiah",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Neh",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "尼希米記",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "尼",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "尼希米记",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "尼",
+      "book_ids": [
+        "Nehemiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Esther",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Esth",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "以斯帖記",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "斯",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "以斯帖记",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "斯",
+      "book_ids": [
+        "Esther"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Job",
+      "book_ids": [
+        "Job"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約伯記",
+      "book_ids": [
+        "Job"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "伯",
+      "book_ids": [
+        "Job"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约伯记",
+      "book_ids": [
+        "Job"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "伯",
+      "book_ids": [
+        "Job"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Psalms",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ps",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "詩篇",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "詩",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "诗篇",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "诗",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Proverbs",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Prov",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "箴言",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "箴",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "箴言",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "箴",
+      "book_ids": [
+        "Proverbs"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ecclesiastes",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Eccl",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "傳道書",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "傳",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "传道书",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "传",
+      "book_ids": [
+        "Ecclesiastes"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Song of Songs",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Song",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "雅歌",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "歌",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "雅歌",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "歌",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Isaiah",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Isa",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "以賽亞書",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "賽",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "以赛亚书",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "赛",
+      "book_ids": [
+        "Isaiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jeremiah",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jer",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "耶利米書",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "耶",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "耶利米书",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "耶",
+      "book_ids": [
+        "Jeremiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Lamentations",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Lam",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "耶利米哀歌",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哀",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "耶利米哀歌",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哀",
+      "book_ids": [
+        "Lamentations"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ezekiel",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ezek",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "以西結書",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "結",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "以西结书",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "结",
+      "book_ids": [
+        "Ezekiel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Daniel",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Dan",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "但以理書",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "但",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "但以理书",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "但",
+      "book_ids": [
+        "Daniel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Hosea",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Hos",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "何西阿書",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "何",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "何西阿书",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "何",
+      "book_ids": [
+        "Hosea"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Joel",
+      "book_ids": [
+        "Joel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約珥書",
+      "book_ids": [
+        "Joel"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "珥",
+      "book_ids": [
+        "Joel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约珥书",
+      "book_ids": [
+        "Joel"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "珥",
+      "book_ids": [
+        "Joel"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Amos",
+      "book_ids": [
+        "Amos"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "阿摩司書",
+      "book_ids": [
+        "Amos"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "摩",
+      "book_ids": [
+        "Amos"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "阿摩司书",
+      "book_ids": [
+        "Amos"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "摩",
+      "book_ids": [
+        "Amos"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Obadiah",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Obad",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "俄巴底亞書",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "俄",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "俄巴底亚书",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "俄",
+      "book_ids": [
+        "Obadiah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jonah",
+      "book_ids": [
+        "Jonah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約拿書",
+      "book_ids": [
+        "Jonah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "拿",
+      "book_ids": [
+        "Jonah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约拿书",
+      "book_ids": [
+        "Jonah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "拿",
+      "book_ids": [
+        "Jonah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Micah",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Mic",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彌迦書",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彌",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "弥迦书",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "弥",
+      "book_ids": [
+        "Micah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Nahum",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Nah",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "那鴻書",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "鴻",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "那鸿书",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "鸿",
+      "book_ids": [
+        "Nahum"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Habakkuk",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Hab",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哈巴谷書",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哈",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哈巴谷书",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哈",
+      "book_ids": [
+        "Habakkuk"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Zephaniah",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Zeph",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "西番雅書",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "番",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "西番雅书",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "番",
+      "book_ids": [
+        "Zephaniah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Haggai",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Hag",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哈該書",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "該",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哈该书",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "该",
+      "book_ids": [
+        "Haggai"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Zechariah",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Zech",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "撒迦利亞書",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "亞",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "撒迦利亚书",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "亚",
+      "book_ids": [
+        "Zechariah"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Malachi",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Mal",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "瑪拉基書",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "瑪",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "玛拉基书",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "玛",
+      "book_ids": [
+        "Malachi"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Matthew",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Matt",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "馬太福音",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "太",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "马太福音",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "太",
+      "book_ids": [
+        "Matthew"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Mark",
+      "book_ids": [
+        "Mark"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "馬可福音",
+      "book_ids": [
+        "Mark"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "可",
+      "book_ids": [
+        "Mark"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "马可福音",
+      "book_ids": [
+        "Mark"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "可",
+      "book_ids": [
+        "Mark"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Luke",
+      "book_ids": [
+        "Luke"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "路加福音",
+      "book_ids": [
+        "Luke"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "路",
+      "book_ids": [
+        "Luke"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "路加福音",
+      "book_ids": [
+        "Luke"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "路",
+      "book_ids": [
+        "Luke"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "John",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jn",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰福音",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰福音",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Acts",
+      "book_ids": [
+        "Acts"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "使徒行傳",
+      "book_ids": [
+        "Acts"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "徒",
+      "book_ids": [
+        "Acts"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "使徒行传",
+      "book_ids": [
+        "Acts"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "徒",
+      "book_ids": [
+        "Acts"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Romans",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Rom",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "羅馬書",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "羅",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "罗马书",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "罗",
+      "book_ids": [
+        "Romans"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Corinthians",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Cor",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哥林多前書",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "林前",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哥林多前书",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "林前",
+      "book_ids": [
+        "1 Corinthians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Corinthians",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Cor",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "哥林多後書",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "林後",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "哥林多后书",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "林后",
+      "book_ids": [
+        "2 Corinthians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Galatians",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Gal",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "加拉太書",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "加",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "加拉太书",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "加",
+      "book_ids": [
+        "Galatians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Ephesians",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Eph",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "以弗所書",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "弗",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "以弗所书",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "弗",
+      "book_ids": [
+        "Ephesians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Philippians",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Phil",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "腓立比書",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "腓",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "腓立比书",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "腓",
+      "book_ids": [
+        "Philippians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Colossians",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Col",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "歌羅西書",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "西",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "歌罗西书",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "西",
+      "book_ids": [
+        "Colossians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Thessalonians",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Thess",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "帖撒羅尼迦前書",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "帖前",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "帖撒罗尼迦前书",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "帖前",
+      "book_ids": [
+        "1 Thessalonians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Thessalonians",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Thess",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "帖撒羅尼迦後書",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "帖後",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "帖撒罗尼迦后书",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "帖后",
+      "book_ids": [
+        "2 Thessalonians"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Timothy",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Tim",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "提摩太前書",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "提前",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "提摩太前书",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "提前",
+      "book_ids": [
+        "1 Timothy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Timothy",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Tim",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "提摩太後書",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "提後",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "提摩太后书",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "提后",
+      "book_ids": [
+        "2 Timothy"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Titus",
+      "book_ids": [
+        "Titus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "提多書",
+      "book_ids": [
+        "Titus"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "多",
+      "book_ids": [
+        "Titus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "提多书",
+      "book_ids": [
+        "Titus"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "多",
+      "book_ids": [
+        "Titus"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Philemon",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Phlm",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "腓利門書",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "門",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "腓利门书",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "门",
+      "book_ids": [
+        "Philemon"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Hebrews",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Heb",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "希伯來書",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "來",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "希伯来书",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "来",
+      "book_ids": [
+        "Hebrews"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "James",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jas",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "雅各書",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "雅",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "雅各书",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "雅",
+      "book_ids": [
+        "James"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Peter",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Pet",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彼得前書",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彼前",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "彼得前书",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "彼前",
+      "book_ids": [
+        "1 Peter"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Peter",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Pet",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彼得後書",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "彼後",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "彼得后书",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "彼后",
+      "book_ids": [
+        "2 Peter"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 John",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "1 Jn",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰一書",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約壹",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰一书",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约壹",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 John",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "2 Jn",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰二書",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約貳",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰二书",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约贰",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "3 John",
+      "book_ids": [
+        "3 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "3 Jn",
+      "book_ids": [
+        "3 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰三書",
+      "book_ids": [
+        "3 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰三书",
+      "book_ids": [
+        "3 John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jude",
+      "book_ids": [
+        "Jude"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "猶大書",
+      "book_ids": [
+        "Jude"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "猶",
+      "book_ids": [
+        "Jude"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "犹大书",
+      "book_ids": [
+        "Jude"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "犹",
+      "book_ids": [
+        "Jude"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Revelation",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Rev",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "啟示錄",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "啟",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "启示录",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "启",
+      "book_ids": [
+        "Revelation"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Jhn",
+      "book_ids": [
+        "John"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Psalm",
+      "book_ids": [
+        "Psalms"
+      ]
+    },
+    {
+      "language": "en",
+      "text": "Song of Solomon",
+      "book_ids": [
+        "Song of Songs"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "創世紀",
+      "book_ids": [
+        "Genesis"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰壹書",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰貳書",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hant",
+      "text": "約翰參書",
+      "book_ids": [
+        "3 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰壹书",
+      "book_ids": [
+        "1 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰贰书",
+      "book_ids": [
+        "2 John"
+      ]
+    },
+    {
+      "language": "zh-Hans",
+      "text": "约翰叁书",
+      "book_ids": [
+        "3 John"
+      ]
+    }
+  ]
+}

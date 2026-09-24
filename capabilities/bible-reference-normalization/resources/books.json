@@ -1,0 +1,447 @@
+{
+  "schema_version": "1.0",
+  "data_version": "0.1.0",
+  "identifier_convention": {
+    "description": "Stable case-sensitive CAIF identifiers use full English book names as frozen registry keys, not localized display labels. Numbered books use an ASCII digit (1, 2, or 3), one ASCII space, and the full name: 1 Samuel, 1 Corinthians, 2 John. No Roman numerals or ordinal words in identifiers. Multiword unnumbered identifiers retain spaces (Song of Songs).",
+    "source_selection": "First 66 entries of SIL Canon.AllBookIds and allBookEnglishNames, paired by index. Explicit CAIF naming overrides: EST -> Esther; DAN -> Daniel. These denote the Protestant forms; other future forms require distinct identities when necessary.",
+    "stability": "Alias additions do not rename IDs. Object entry order has no canonical meaning. Profile membership and order are defined only in canon-profiles.json."
+  },
+  "provenance": {
+    "source": {
+      "repository": "https://github.com/sillsdev/libpalaso",
+      "revision": "8948e6c5e5a97a1c82b802ec9e87590078fb5a6d",
+      "path": "SIL.Scripture/Canon.cs",
+      "url": "https://raw.githubusercontent.com/sillsdev/libpalaso/8948e6c5e5a97a1c82b802ec9e87590078fb5a6d/SIL.Scripture/Canon.cs",
+      "sha256": "0b937ea4cacf228c8b5dbf9ddc7f41b0dc17799fde5816fd7f676725592f3f76"
+    },
+    "osis_mapping_source": {
+      "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser",
+      "revision": "1d9deeff18f4c65420747144b3edddafc6747c23",
+      "path": "esm/lang/en.js",
+      "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser/1d9deeff18f4c65420747144b3edddafc6747c23/esm/lang/en.js",
+      "sha256": "abf9081fc08c6240674a1ce337647836f1bd6fb3f19c4c8169b3b3b0b9bf2280"
+    },
+    "licenses": [
+      {
+        "spdx_id": "MIT",
+        "source": {
+          "repository": "https://github.com/sillsdev/libpalaso",
+          "revision": "8948e6c5e5a97a1c82b802ec9e87590078fb5a6d",
+          "path": "LICENSE",
+          "url": "https://raw.githubusercontent.com/sillsdev/libpalaso/8948e6c5e5a97a1c82b802ec9e87590078fb5a6d/LICENSE",
+          "sha256": "b1f6bf8b2490437784c3c29b7e6f9997fd05e6a3dfd87353b65b47e1f18ff2fc"
+        },
+        "text": "The MIT License (MIT)\n\nCopyright (c) 2007-2025 SIL Global\n\nPermission is hereby granted, free of charge, to any person obtaining a copy\nof this software and associated documentation files (the \"Software\"), to deal\nin the Software without restriction, including without limitation the rights\nto use, copy, modify, merge, publish, distribute, sublicense, and/or sell\ncopies of the Software, and to permit persons to whom the Software is\nfurnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in\nall copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR\nIMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,\nFITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE\nAUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER\nLIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,\nOUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN\nTHE SOFTWARE.\n"
+      },
+      {
+        "spdx_id": "MIT",
+        "source": {
+          "repository": "https://github.com/openbibleinfo/Bible-Passage-Reference-Parser",
+          "revision": "1d9deeff18f4c65420747144b3edddafc6747c23",
+          "path": "LICENSE.md",
+          "url": "https://raw.githubusercontent.com/openbibleinfo/Bible-Passage-Reference-Parser/1d9deeff18f4c65420747144b3edddafc6747c23/LICENSE.md",
+          "sha256": "acce73a6676a119220173325e7aecee4ac8f61f21988b693aa40b472e21c20ae"
+        },
+        "text": "Copyright (c) 2011-2026 Stephen Smith\n\nPermission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the \"Software\"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:\n\nThe above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.\n\nTHE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE."
+      }
+    ]
+  },
+  "books": {
+    "Genesis": {
+      "source_ids": {
+        "usfm": "GEN",
+        "osis": "Gen"
+      }
+    },
+    "Exodus": {
+      "source_ids": {
+        "usfm": "EXO",
+        "osis": "Exod"
+      }
+    },
+    "Leviticus": {
+      "source_ids": {
+        "usfm": "LEV",
+        "osis": "Lev"
+      }
+    },
+    "Numbers": {
+      "source_ids": {
+        "usfm": "NUM",
+        "osis": "Num"
+      }
+    },
+    "Deuteronomy": {
+      "source_ids": {
+        "usfm": "DEU",
+        "osis": "Deut"
+      }
+    },
+    "Joshua": {
+      "source_ids": {
+        "usfm": "JOS",
+        "osis": "Josh"
+      }
+    },
+    "Judges": {
+      "source_ids": {
+        "usfm": "JDG",
+        "osis": "Judg"
+      }
+    },
+    "Ruth": {
+      "source_ids": {
+        "usfm": "RUT",
+        "osis": "Ruth"
+      }
+    },
+    "1 Samuel": {
+      "source_ids": {
+        "usfm": "1SA",
+        "osis": "1Sam"
+      }
+    },
+    "2 Samuel": {
+      "source_ids": {
+        "usfm": "2SA",
+        "osis": "2Sam"
+      }
+    },
+    "1 Kings": {
+      "source_ids": {
+        "usfm": "1KI",
+        "osis": "1Kgs"
+      }
+    },
+    "2 Kings": {
+      "source_ids": {
+        "usfm": "2KI",
+        "osis": "2Kgs"
+      }
+    },
+    "1 Chronicles": {
+      "source_ids": {
+        "usfm": "1CH",
+        "osis": "1Chr"
+      }
+    },
+    "2 Chronicles": {
+      "source_ids": {
+        "usfm": "2CH",
+        "osis": "2Chr"
+      }
+    },
+    "Ezra": {
+      "source_ids": {
+        "usfm": "EZR",
+        "osis": "Ezra"
+      }
+    },
+    "Nehemiah": {
+      "source_ids": {
+        "usfm": "NEH",
+        "osis": "Neh"
+      }
+    },
+    "Esther": {
+      "source_ids": {
+        "usfm": "EST",
+        "osis": "Esth"
+      }
+    },
+    "Job": {
+      "source_ids": {
+        "usfm": "JOB",
+        "osis": "Job"
+      }
+    },
+    "Psalms": {
+      "source_ids": {
+        "usfm": "PSA",
+        "osis": "Ps"
+      }
+    },
+    "Proverbs": {
+      "source_ids": {
+        "usfm": "PRO",
+        "osis": "Prov"
+      }
+    },
+    "Ecclesiastes": {
+      "source_ids": {
+        "usfm": "ECC",
+        "osis": "Eccl"
+      }
+    },
+    "Song of Songs": {
+      "source_ids": {
+        "usfm": "SNG",
+        "osis": "Song"
+      }
+    },
+    "Isaiah": {
+      "source_ids": {
+        "usfm": "ISA",
+        "osis": "Isa"
+      }
+    },
+    "Jeremiah": {
+      "source_ids": {
+        "usfm": "JER",
+        "osis": "Jer"
+      }
+    },
+    "Lamentations": {
+      "source_ids": {
+        "usfm": "LAM",
+        "osis": "Lam"
+      }
+    },
+    "Ezekiel": {
+      "source_ids": {
+        "usfm": "EZK",
+        "osis": "Ezek"
+      }
+    },
+    "Daniel": {
+      "source_ids": {
+        "usfm": "DAN",
+        "osis": "Dan"
+      }
+    },
+    "Hosea": {
+      "source_ids": {
+        "usfm": "HOS",
+        "osis": "Hos"
+      }
+    },
+    "Joel": {
+      "source_ids": {
+        "usfm": "JOL",
+        "osis": "Joel"
+      }
+    },
+    "Amos": {
+      "source_ids": {
+        "usfm": "AMO",
+        "osis": "Amos"
+      }
+    },
+    "Obadiah": {
+      "source_ids": {
+        "usfm": "OBA",
+        "osis": "Obad"
+      }
+    },
+    "Jonah": {
+      "source_ids": {
+        "usfm": "JON",
+        "osis": "Jonah"
+      }
+    },
+    "Micah": {
+      "source_ids": {
+        "usfm": "MIC",
+        "osis": "Mic"
+      }
+    },
+    "Nahum": {
+      "source_ids": {
+        "usfm": "NAM",
+        "osis": "Nah"
+      }
+    },
+    "Habakkuk": {
+      "source_ids": {
+        "usfm": "HAB",
+        "osis": "Hab"
+      }
+    },
+    "Zephaniah": {
+      "source_ids": {
+        "usfm": "ZEP",
+        "osis": "Zeph"
+      }
+    },
+    "Haggai": {
+      "source_ids": {
+        "usfm": "HAG",
+        "osis": "Hag"
+      }
+    },
+    "Zechariah": {
+      "source_ids": {
+        "usfm": "ZEC",
+        "osis": "Zech"
+      }
+    },
+    "Malachi": {
+      "source_ids": {
+        "usfm": "MAL",
+        "osis": "Mal"
+      }
+    },
+    "Matthew": {
+      "source_ids": {
+        "usfm": "MAT",
+        "osis": "Matt"
+      }
+    },
+    "Mark": {
+      "source_ids": {
+        "usfm": "MRK",
+        "osis": "Mark"
+      }
+    },
+    "Luke": {
+      "source_ids": {
+        "usfm": "LUK",
+        "osis": "Luke"
+      }
+    },
+    "John": {
+      "source_ids": {
+        "usfm": "JHN",
+        "osis": "John"
+      }
+    },
+    "Acts": {
+      "source_ids": {
+        "usfm": "ACT",
+        "osis": "Acts"
+      }
+    },
+    "Romans": {
+      "source_ids": {
+        "usfm": "ROM",
+        "osis": "Rom"
+      }
+    },
+    "1 Corinthians": {
+      "source_ids": {
+        "usfm": "1CO",
+        "osis": "1Cor"
+      }
+    },
+    "2 Corinthians": {
+      "source_ids": {
+        "usfm": "2CO",
+        "osis": "2Cor"
+      }
+    },
+    "Galatians": {
+      "source_ids": {
+        "usfm": "GAL",
+        "osis": "Gal"
+      }
+    },
+    "Ephesians": {
+      "source_ids": {
+        "usfm": "EPH",
+        "osis": "Eph"
+      }
+    },
+    "Philippians": {
+      "source_ids": {
+        "usfm": "PHP",
+        "osis": "Phil"
+      }
+    },
+    "Colossians": {
+      "source_ids": {
+        "usfm": "COL",
+        "osis": "Col"
+      }
+    },
+    "1 Thessalonians": {
+      "source_ids": {
+        "usfm": "1TH",
+        "osis": "1Thess"
+      }
+    },
+    "2 Thessalonians": {
+      "source_ids": {
+        "usfm": "2TH",
+        "osis": "2Thess"
+      }
+    },
+    "1 Timothy": {
+      "source_ids": {
+        "usfm": "1TI",
+        "osis": "1Tim"
+      }
+    },
+    "2 Timothy": {
+      "source_ids": {
+        "usfm": "2TI",
+        "osis": "2Tim"
+      }
+    },
+    "Titus": {
+      "source_ids": {
+        "usfm": "TIT",
+        "osis": "Titus"
+      }
+    },
+    "Philemon": {
+      "source_ids": {
+        "usfm": "PHM",
+        "osis": "Phlm"
+      }
+    },
+    "Hebrews": {
+      "source_ids": {
+        "usfm": "HEB",
+        "osis": "Heb"
+      }
+    },
+    "James": {
+      "source_ids": {
+        "usfm": "JAS",
+        "osis": "Jas"
+      }
+    },
+    "1 Peter": {
+      "source_ids": {
+        "usfm": "1PE",
+        "osis": "1Pet"
+      }
+    },
+    "2 Peter": {
+      "source_ids": {
+        "usfm": "2PE",
+        "osis": "2Pet"
+      }
+    },
+    "1 John": {
+      "source_ids": {
+        "usfm": "1JN",
+        "osis": "1John"
+      }
+    },
+    "2 John": {
+      "source_ids": {
+        "usfm": "2JN",
+        "osis": "2John"
+      }
+    },
+    "3 John": {
+      "source_ids": {
+        "usfm": "3JN",
+        "osis": "3John"
+      }
+    },
+    "Jude": {
+      "source_ids": {
+        "usfm": "JUD",
+        "osis": "Jude"
+      }
+    },
+    "Revelation": {
+      "source_ids": {
+        "usfm": "REV",
+        "osis": "Rev"
+      }
+    }
+  }
+}

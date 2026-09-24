@@ -8,7 +8,10 @@ applications, AI agents, and other capabilities.
 
 It supports consistent storage of references and provides structured
 book, chapter, and verse information to downstream consumers. Version 0.1
-supports the 66 books of the Protestant Bible canon.
+uses profile `protestant-66-paratext-english`: the Protestant 66-book canon
+with SIL/Paratext English (`ScrVers.English`) versification, restricted to
+positive-integer chapter and verse coordinates. English names the
+numbering convention, not an input-language restriction.
 
 The capability performs structural normalization only. It does not
 interpret Scripture, determine doctrine, or perform exegesis.
@@ -24,13 +27,22 @@ object. Normalization preserves the original reference text and maps
 recognized English and Chinese book names to the same canonical book
 identity.
 
+Canonical book IDs are stable, case-sensitive registry keys using full
+English names. Numbered books use an ASCII digit and one space, such as
+`1 Samuel`, `1 Corinthians`, and `2 John`. Aliases never rename IDs.
+
+A valid address belongs to this profile's numbering convention; it does
+not assert that a translation prints that verse in its main text.
+Whole-chapter references retain null verse endpoints and are never
+expanded into verse ranges.
+
 ## Examples
 
 | Input | Meaning after normalization |
 | --- | --- |
 | `John 3` | The entire third chapter of John |
 | `Jn 3:16-18` | John chapter 3, verses 16 through 18 |
-| `約三16` | John chapter 3, verse 16 |
+| `約三16` or `约三16` | John chapter 3, verse 16 |
 | `Jude 5` | Jude chapter 1, verse 5 |
 | `Genesis 1-3` | Genesis chapters 1 through 3 |
 | `創1-3` | Genesis chapters 1 through 3 |
@@ -38,6 +50,28 @@ identity.
 Ambiguous references must be identified rather than silently guessed.
 Unresolved ambiguity in deployed applications requires user clarification.
 Invalid references must not be fabricated into valid passages.
+
+## Aliases and Resources
+
+Accepted aliases use `en`, `zh-Hant`, and `zh-Hans`. Matching follows the
+deterministic normalization in `book-aliases.json`: NFC, ASCII whitespace
+normalization, and ASCII case folding for English only. Matching retains
+all candidate book IDs; entry order never resolves ambiguity.
+
+P0 does not accept `約三` / `约三` as the book `3 John`. Use unambiguous
+English or full Chinese names such as `約翰三書` / `约翰三书`.
+Bare `約翰` / `约翰` remain deferred. No speculative aliases are implied.
+
+The four JSON resources are authoritative for resource data:
+
+- [canon-profiles.json](resources/canon-profiles.json): profile definition,
+  ordered canon membership, and exact resource-version bindings.
+- [books.json](resources/books.json): stable canonical identities and source-ID
+  mappings, without canon order, membership, or chapter counts.
+- [book-aliases.json](resources/book-aliases.json): accepted input names,
+  language tags, candidate IDs, matching normalization, and deferred aliases.
+- [bible-structure.json](resources/bible-structure.json): complete chapter/verse
+  maxima, pinned source provenance, licensing, and cross-validation results.
 
 ## Documentation
 
@@ -60,6 +94,12 @@ an LLM, or combinations, provided they conform to the specification.
 Invocation adapters such as REST, CLI, MCP, or Agent Skills must preserve
 the meaning of the normalized reference and the canonical contract.
 
+P0 excludes verse zero, subverse coordinates, cross-versification
+conversion, discontinuous references, multiple passages, cross-book
+ranges, whole-book-only references, and `ff`. These forms must not be
+silently reinterpreted; see the specification for the precise boundaries.
+Additional books in the upstream Paratext data are excluded from P0.
+
 ## Governance
 
 Structural normalization normally does not require theological review.
@@ -74,5 +114,7 @@ applicable privacy and access policies.
 ## Status
 
 Bible Reference Normalization is a draft capability, version `0.1.0`,
-with specification version `0.1`. This directory currently contains its
-defining documentation; implementation and tests are not yet present.
+with specification version `0.1`. This directory contains the capability
+documentation and approved P0 resources, including the complete 66-book
+structure extracted from pinned SIL data and cross-validated against
+pinned OpenBible `nlt`. Implementation and tests are not yet present.

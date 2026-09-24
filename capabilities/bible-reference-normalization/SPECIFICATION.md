@@ -54,11 +54,23 @@ or another individual application.
 ## 3. Supported Canon
 
 Version 0.1 of this capability MUST support the 66 books of the
-Protestant Bible canon.
+Protestant Bible canon through profile `protestant-66-paratext-english`.
+This profile uses SIL/Paratext English (`ScrVers.English`) versification,
+restricted to the positive-integer coordinates supported by
+`BiblePassageReference`. The upstream source contains additional books;
+those books MUST NOT be included in this P0 profile.
 
-The initial implementation is NOT REQUIRED to normalize
-deuterocanonical or other books used by Catholic, Orthodox, or other
-canonical traditions.
+The source is `sillsdev/libpalaso`,
+`SIL.Scripture/Resources/eng.vrs.txt`. The exact approved revision,
+checksum, derivation, MIT notices, and complete-canon cross-validation
+against the pinned OpenBible `nlt` system are recorded in
+`resources/bible-structure.json`. That provenance, not an unpinned upstream
+branch or an assumed translation convention, defines the structural data.
+
+This profile defines valid reference addresses, not which verses a
+particular translation prints, omits, brackets, or footnotes. English in
+the profile name describes versification, not the language of input.
+P0 MUST NOT perform cross-versification conversion.
 
 The design MUST NOT, however, make future support for other canon
 profiles impossible.
@@ -69,17 +81,53 @@ needed rather than being embedded irreversibly in parsing logic.
 Other organizations or downstream projects MAY extend or adapt the
 open-source capability to support additional canon profiles.
 
+### Authoritative P0 Resources
+
+The following resources are authoritative for their data. Documentation
+MUST NOT maintain competing copies of the complete datasets.
+
+- [canon-profiles.json](resources/canon-profiles.json): profile definition,
+  ordered canon membership, and exact resource-version bindings.
+- [books.json](resources/books.json): stable canonical identities and source-ID
+  mappings, without canon order, membership, or chapter counts.
+- [book-aliases.json](resources/book-aliases.json): accepted input names,
+  language tags, candidate IDs, matching normalization, and deferred aliases.
+- [bible-structure.json](resources/bible-structure.json): complete chapter/verse
+  maxima, pinned source provenance, licensing, and cross-validation results.
+
+Implementations MUST honor the exact resource-version bindings. Every
+profile member MUST resolve to a registry ID and complete structure;
+missing or inconsistent resource data is an operational error, not proof
+that a user's reference is invalid.
+
+For this profile, `verse_counts` contains complete chapter arrays: array
+index zero represents chapter 1, and every positive integer from 1
+through the stored maximum is a valid verse address. Chapter count and
+single-chapter status MUST be derived from array length. Profile order
+comes only from `canon-profiles.json`.
+
+### Canonical Book IDs
+
+`BiblePassageReference.book` MUST equal a key in `books.json`, not a
+localized label or input abbreviation. IDs are stable and case-sensitive,
+using full English names. Numbered books use an ASCII digit (1, 2, or 3),
+one ASCII space, and the full name: `1 Samuel`, `1 Corinthians`, `2 John`.
+Multiword names retain spaces, as in `Song of Songs`. The registry uses
+`Esther` and `Daniel` for their Protestant forms. Alias additions MUST NOT
+rename IDs or change book identity; registry object order is not canon order.
+
 ---
 
 ## 4. Supported Languages
 
 Version 0.1 MUST support Bible references written in:
 
-- English
-- Chinese
+- English (`en`)
+- Traditional Chinese (`zh-Hant`)
+- Simplified Chinese (`zh-Hans`)
 
-The capability SHOULD recognize commonly used English and Chinese
-book names and abbreviations.
+The approved `book-aliases.json` defines the accepted P0 names and
+abbreviations; implementations MUST NOT invent speculative aliases.
 
 Examples that MUST be supported include:
 
@@ -114,15 +162,17 @@ Optional contextual inputs MAY include:
     canon_profile
     surrounding_text
 
-`language` MAY be supplied when already known.
+`language` MAY be supplied when already known. A supplied `en`, `zh-Hant`,
+or `zh-Hans` selects that alias tag. A broad `zh` hint searches both Chinese
+tags; unknown language searches all three and unions candidates. Identical
+spellings across scripts MUST NOT be used to infer a specific script.
 
 If language is not supplied, an implementation MAY detect the
 language from the input.
 
 `canon_profile`, when omitted in Version 0.1, SHALL default to the
-supported Protestant 66-book canon profile and the numbering convention
-used by the P0 reference data. For P0 v0.1, `canon_profile` covers both
-canon membership and that numbering convention. No separate
+`protestant-66-paratext-english` profile and its pinned numbering convention.
+For P0 v0.1, `canon_profile` covers both canon membership and that numbering convention. No separate
 `numbering_profile` is defined yet; a future contract revision MAY add
 one without changing the meaning of existing coordinates.
 
@@ -297,6 +347,26 @@ The capability MUST:
 Normalization MUST preserve the meaning of the reference rather than
 merely rewriting its textual appearance.
 
+### Deterministic Alias Matching
+
+For complete book tokens, implementations MUST follow
+`book-aliases.json.matching_normalization`:
+
+1. Apply Unicode NFC using the resource's documented normalization version.
+2. Collapse runs of ASCII whitespace (U+0009 through U+000D and U+0020)
+   to one U+0020, then trim leading and trailing U+0020.
+3. For `en` only, fold ASCII A-Z to a-z.
+
+This process MUST NOT remove punctuation, delete internal spaces, convert
+scripts, interpret Roman numerals, or alter `original_text`. It does not
+replace the reference grammar, including Chinese chapter numerals.
+
+Union all candidate `book_ids` for matching normalized tokens in eligible
+languages and deduplicate identical IDs. Candidate or resource entry order
+MUST NOT select a winner. Multiple candidates require clarification.
+Alias matching operates on complete book tokens: prefix or longest-string
+matching alone MUST NOT override the reference semantics in Section 12.
+
 ---
 
 ## 8. Whole-Chapter References
@@ -313,7 +383,8 @@ means:
     the entire third chapter of the Gospel of John
 
 It MUST NOT be silently interpreted as John 3:1 or another individual
-verse.
+verse. Whole-chapter references MUST retain null verse endpoints and
+MUST NOT be expanded into verse ranges, even when chapter maxima are known.
 
 ---
 
@@ -340,7 +411,8 @@ number:
     verse_end = 5
 
 The same rule MUST apply consistently to all supported single-chapter
-Biblical books, as determined by the active profile. Thus `Jude 1` means
+Biblical books, as determined by the active profile's complete
+`verse_counts` arrays. Thus `Jude 1` means
 verse 1; an explicitly marked whole chapter, such as `Jude chapter 1`,
 uses chapter endpoints of 1 and null verse endpoints.
 
@@ -360,7 +432,8 @@ Examples:
     創1-3
 
 These references SHALL represent Genesis chapters 1 through 3,
-inclusive.
+inclusive. Both verse endpoints MUST remain null; complete chapter ranges
+MUST NOT be expanded into verse ranges.
 
 A chapter range MUST be distinguishable in the canonical contract
 from a verse range.
@@ -402,13 +475,15 @@ not compared to the starting verse number when the chapters differ.
 
 ## 12. Chinese Reference Normalization
 
-The capability MUST support commonly used Chinese Bible book names
-and abbreviations.
+The capability MUST support the approved Chinese book names and
+abbreviations in `book-aliases.json`.
 
 For Version 0.1, examples that MUST normalize correctly include:
 
     約翰福音3:16
+    约翰福音3:16
     約三16
+    约三16
     創世紀1-3章
     創1-3
 
@@ -427,6 +502,16 @@ and:
 SHALL be semantically equivalent to:
 
     Genesis 1-3
+
+Both `約三16` and `约三16` MUST mean `John 3:16`: the book token is
+`約` / `约`, followed by chapter three and verse sixteen. P0 MUST NOT
+accept `約三` / `约三` as shorthand book tokens for `3 John`.
+
+`3 John` remains accessible through its approved unambiguous English
+aliases and full Chinese names, including `約翰三書` / `约翰三书`.
+Bare `約翰` / `约翰` MUST remain deferred until an explicit disambiguation
+policy is approved. They MUST NOT be silently mapped to the Gospel or an
+epistle. The `deferred_aliases` metadata is not an accepted alias list.
 
 Chinese input MUST NOT require translation by the user before
 normalization.
@@ -540,7 +625,12 @@ separately resolved by future specifications:
 - cross-book ranges;
 - whole-book-only references such as `John`;
 - open-ended `ff` notation such as `John 3:16ff`;
-- subverse notation such as `John 3:16a`.
+- subverse notation such as `John 3:16a`;
+- verse-zero coordinates, including Psalm superscription addresses.
+
+Cross-versification conversion is also outside P0. A reference from a
+different numbering convention MUST NOT be silently converted or treated
+as equivalent merely because its coordinates fit P0 maxima.
 
 The capability MUST NOT silently reinterpret these forms, fill gaps,
 expand whole books, drop subverse qualifiers, or invent endpoints to
@@ -706,7 +796,16 @@ The evaluation suite MUST also include:
   verse endpoints by schema validation;
 - rejection of reversed chapter ranges and reversed same-chapter verse
   ranges by capability validation;
-- all six canonical JSON examples in Section 6 against the schema.
+- all six canonical JSON examples in Section 6 against the schema;
+- `约三16` as well as `約三16` normalizing to `John 3:16`;
+- deferred book tokens remaining unaccepted, with `3 John` accessible
+  through approved English and full Chinese names;
+- deterministic alias normalization, language selection, and candidate
+  union without resolving ambiguity by entry order;
+- complete resource membership, unique IDs, valid alias targets, exact
+  version bindings, and structural agreement with the pinned sources;
+- whole-chapter and chapter-range outputs retaining null verse endpoints;
+- address validity remaining independent of translation main-text presence.
 
 Every corrected normalization defect SHOULD result in a regression
 test.

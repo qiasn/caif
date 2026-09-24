@@ -45,9 +45,15 @@ Optional inputs may include:
     canon_profile
     surrounding_text
 
-For P0 v0.1, omitted `canon_profile` defaults to the Protestant 66-book
-canon and the numbering convention used by the P0 reference data.
+For P0 v0.1, omitted `canon_profile` defaults to
+`protestant-66-paratext-english`: the Protestant 66-book canon and the
+positive-integer subset of SIL/Paratext English (`ScrVers.English`).
+English identifies the numbering convention, not an input-language limit.
 `canon_profile` covers both; no separate numbering profile is defined yet.
+
+Accepted alias tags are `en`, `zh-Hant`, and `zh-Hans`. A supplied tag
+selects that alias language; a broad `zh` hint searches both Chinese tags.
+Unknown language searches all three. Shared spellings do not establish script.
 
 ## Outputs
 
@@ -64,11 +70,17 @@ one book. Required fields are `schema_version` (`"1.0"`), `book`,
 `chapter_start`, `verse_start`, `chapter_end`, `verse_end`, and
 `original_text`. The old `chapter` field is not supported.
 
+`book` is a stable, case-sensitive key from `books.json`, using full
+English names. Numbered IDs use an ASCII digit and one space, such as
+`1 Samuel`, `1 Corinthians`, and `2 John`; `Song of Songs` retains spaces.
+Aliases do not rename these IDs.
+
 Chapter endpoints are positive integers, never null. Verse endpoints
 must both be positive integers or both be null. Null means complete
 chapter(s), never unknown or inferred verses. A single chapter repeats
 its chapter number; a single verse repeats both chapter and verse
-coordinates. All endpoints are inclusive.
+coordinates. All endpoints are inclusive. Whole-chapter and chapter-range
+references must retain null verse endpoints, never expand to verse ranges.
 
 The contract is success-only: do not add ambiguity, error, or status
 fields or return partial objects for non-success outcomes. No separate
@@ -94,6 +106,43 @@ types. Capability behavior and tests check supported book identities,
 actual chapter/verse existence, range ordering, and ambiguity. Across
 chapters, the ending verse number may be smaller than the starting one.
 
+Follow the deterministic matching rules in `book-aliases.json`: NFC on
+book tokens, collapse and trim ASCII whitespace (U+0009 through U+000D
+and U+0020), then fold ASCII A-Z for `en` only. Do not remove punctuation,
+delete internal spaces, convert scripts, interpret Roman numerals, or
+alter `original_text` during alias matching. Union and deduplicate all
+matching candidate IDs; multiple candidates require clarification.
+
+`約三16` and `约三16` mean `John 3:16`. Do not accept `約三` / `约三`
+as book aliases for `3 John`. Use approved English or full Chinese names,
+such as `約翰三書` / `约翰三书`, for that book. Bare `約翰` / `约翰`
+remain deferred. Do not invent aliases or use longest-prefix matching to
+override these reference semantics.
+
+A valid address is valid under the selected profile, regardless of whether
+a translation prints that verse in its main text. `verse_counts` means
+every positive integer from 1 through the stored maximum is valid.
+
+## Resources
+
+The JSON resources are authoritative for data; do not reproduce their
+complete contents in prompts or maintain alternative tables.
+
+- [canon-profiles.json](resources/canon-profiles.json): profile definition,
+  ordered canon membership, and exact resource-version bindings.
+- [books.json](resources/books.json): stable canonical identities and source-ID
+  mappings, without canon order, membership, or chapter counts.
+- [book-aliases.json](resources/book-aliases.json): accepted input names,
+  language tags, candidate IDs, matching normalization, and deferred aliases.
+- [bible-structure.json](resources/bible-structure.json): complete chapter/verse
+  maxima, pinned source provenance, licensing, and cross-validation results.
+
+Use the profile's exact version bindings and the structural provenance.
+The structure derives from pinned SIL data and is cross-validated against
+pinned OpenBible `nlt`. Chapter count and single-chapter status come from
+complete structure arrays. Missing resources are operational errors, not
+invalid user references.
+
 ## Do Not Use
 
 Do not use this capability to:
@@ -107,9 +156,11 @@ This capability normalizes references only.
 
 The v0.1 canonical representation excludes discontinuous references
 (`John 3:16,18`), multiple passages (`John 3; Romans 8`), cross-book
-ranges, whole-book-only references, `ff`, and subverse notation such as
-`16a`, unless separately resolved by future specifications. Do not
-silently reinterpret these forms to produce a successful object.
+ranges, whole-book-only references, `ff`, verse zero, and subverse notation
+such as `16a`, unless separately resolved by future specifications.
+P0 does not perform cross-versification conversion or include additional
+books present in the upstream Paratext data. Do not silently reinterpret
+these forms to produce a successful object.
 
 
 ## Uncertainty

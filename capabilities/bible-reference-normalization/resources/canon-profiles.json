@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "data_version": "0.1.0",
+  "default_profile": "protestant-66-paratext-english",
+  "resources": {
+    "books": {
+      "file": "books.json",
+      "schema_version": "1.0",
+      "data_version": "0.1.0"
+    },
+    "aliases": {
+      "file": "book-aliases.json",
+      "schema_version": "1.0",
+      "data_version": "0.1.0"
+    },
+    "structure": {
+      "file": "bible-structure.json",
+      "schema_version": "1.0",
+      "data_version": "0.1.0"
+    }
+  },
+  "profiles": {
+    "protestant-66-paratext-english": {
+      "description": "Protestant 66-book canon with SIL/Paratext English (ScrVers.English) versification restricted to CAIF positive-integer coordinates.",
+      "versification": "SIL/Paratext English (ScrVers.English)",
+      "coordinate_subset": "Positive-integer chapter and verse coordinates supported by BiblePassageReference; null verse endpoints select complete chapters.",
+      "verse_counts_semantics": "Each stored value is a maximum verse address; every positive integer from 1 through that maximum is valid. Chapter number equals array index plus one.",
+      "input_languages": [
+        "en",
+        "zh-Hant",
+        "zh-Hans"
+      ],
+      "language_note": "English in the profile ID names the versification convention, not an input-language restriction.",
+      "limitations": [
+        "No verse-zero coordinates.",
+        "No subverse coordinates.",
+        "No cross-versification conversion.",
+        "Valid reference addresses do not specify which verses a translation prints in its main text.",
+        "Additional upstream books are excluded from P0.",
+        "Whole-chapter references remain whole-chapter references and MUST NOT be expanded into verse ranges."
+      ],
+      "book_ids": [
+        "Genesis",
+        "Exodus",
+        "Leviticus",
+        "Numbers",
+        "Deuteronomy",
+        "Joshua",
+        "Judges",
+        "Ruth",
+        "1 Samuel",
+        "2 Samuel",
+        "1 Kings",
+        "2 Kings",
+        "1 Chronicles",
+        "2 Chronicles",
+        "Ezra",
+        "Nehemiah",
+        "Esther",
+        "Job",
+        "Psalms",
+        "Proverbs",
+        "Ecclesiastes",
+        "Song of Songs",
+        "Isaiah",
+        "Jeremiah",
+        "Lamentations",
+        "Ezekiel",
+        "Daniel",
+        "Hosea",
+        "Joel",
+        "Amos",
+        "Obadiah",
+        "Jonah",
+        "Micah",
+        "Nahum",
+        "Habakkuk",
+        "Zephaniah",
+        "Haggai",
+        "Zechariah",
+        "Malachi",
+        "Matthew",
+        "Mark",
+        "Luke",
+        "John",
+        "Acts",
+        "Romans",
+        "1 Corinthians",
+        "2 Corinthians",
+        "Galatians",
+        "Ephesians",
+        "Philippians",
+        "Colossians",
+        "1 Thessalonians",
+        "2 Thessalonians",
+        "1 Timothy",
+        "2 Timothy",
+        "Titus",
+        "Philemon",
+        "Hebrews",
+        "James",
+        "1 Peter",
+        "2 Peter",
+        "1 John",
+        "2 John",
+        "3 John",
+        "Jude",
+        "Revelation"
+      ]
+    }
+  }
+}
