@@ -33,8 +33,9 @@ when CAIF adopts Python packaging; do not copy the capability to package it here
 `bible_reference_tool.py` exports the typed synchronous wrapper
 `normalize_bible_reference(raw_reference, language=None, canon_profile=None)`
 and the actual ADK `FunctionTool` instance `bible_reference_tool`. A consuming
-application registers that instance in its ADK agent's `tools` list. No agent,
-runner, model configuration, or deployment application is supplied here.
+application registers that instance in its ADK agent's `tools` list. The separate
+P0-C2 experiment below supplies one minimal agent and runner, not a deployment
+application.
 
 From this adapter directory, an offline Python invocation is:
 
@@ -113,3 +114,101 @@ It must still report 96 passing tests. Adapter tests also compare results with
 independent direct calls, validate success against the existing contract, verify
 argument forwarding and exact object preservation, exercise exception handling,
 and load/invoke the adapter from an unrelated working directory.
+
+
+## P0-C2: explicitly invoked agent experiment
+
+`minimal_agent.py` constructs one `Agent` with only `bible_reference_tool`.
+Its short instruction asks for normalization through the tool and clarification
+on errors, without teaching Bible-reference semantics. `Runner.run_async` uses
+`InMemorySessionService.create_session` with a fresh session per example so
+examples do not influence each other. This service supplies ADK's required
+execution session, not a memory architecture. Each interaction is limited to
+five model calls.
+
+**Canonical data = tool result. Natural-language final answer = presentation,
+not canonical data.** Final prose is never parsed back into a CAIF object.
+
+The experiment returns observation records containing:
+
+- `user`: the exact request and a separately recorded expected reference span;
+- `tool_calls`: actual model function-call IDs, names and arguments;
+- `adapter_returns`: copies observed by an after-tool callback that returns None;
+- `tool_responses`: ADK function-response event payloads, including errors;
+- `final_responses`: final non-thought text, kept separate from canonical data;
+- `events`: the complete yielded ADK events;
+- `checks`: event/adapter equality and exact reference-text comparisons, with
+  null for inapplicable checks. Empty calls/results remain empty if no tool runs.
+
+These are experiment observations, not a CAIF result contract. Multiple calls,
+rewritten arguments, retries and missing final responses are retained, not
+silently corrected. An error result is not labeled a canonical passage.
+The four requested references plus `Please normalize John 3:16,18` are included.
+The expected reference spans are used only for comparison, never fed into the
+agent to choose its arguments.
+
+### Manual configuration and live invocation
+
+This minimal experiment deliberately uses Gemini Developer API. It checks for
+`CAIF_ADK_MODEL` and `GOOGLE_API_KEY` or `GEMINI_API_KEY`, and rejects Vertex AI
+mode. ADK's installed GenAI client prioritizes GOOGLE_API_KEY when both keys are
+set. Choose a Gemini model ID currently available to your account with function
+calling support. No default model or credential is embedded in source.
+
+In your local terminal, activate the repository virtual environment and set
+`GOOGLE_GENAI_USE_VERTEXAI=FALSE` and `CAIF_ADK_MODEL` to that model ID. Export a
+key locally through your normal secret-management method (or a hidden terminal
+prompt). Do not put it in source, shell history, captured experiment output, or
+chat. The program does not automatically load `.env` files. No Vertex project,
+location, or ADC credentials are needed for this chosen route.
+
+From `adapters/google-adk`, invoke explicitly in Python, outside pytest:
+
+```python
+import asyncio
+import json
+from minimal_agent import run_live_experiment
+
+observations = asyncio.run(run_live_experiment())
+print(json.dumps(observations, ensure_ascii=False, indent=2))
+```
+
+This makes real model/API calls and may incur charges. It is not run on import
+or by ordinary pytest. Preserve the printed observations for inspection; the
+experiment does not automatically write files. Instructions request exact text,
+but do not guarantee model tool selection, arguments, or final wording.
+
+### Verification status
+
+The user-run live P0-C2 experiment completed successfully with
+`gemini-3.5-flash-lite` and ADK 2.9.2. The following empirical results were
+reported by the user for this run:
+
+- All five model-generated tool calls preserved the designated reference span
+  exactly: `約三16`, `Jn 3:16`, `創世紀1-3章`, `Jude 5`, and `John 3:16,18`.
+- All four successful canonical results preserved `original_text`. ADK event
+  tool-response payloads equaled the corresponding adapter returns.
+- `John 3:16,18` reached the tool unchanged, was rejected as
+  `UnsupportedSyntax`, and was not converted by the agent into a successful
+  canonical result.
+- `Jude 5` was passed unchanged and normalized by CAIF to Jude 1:5,
+  demonstrating that single-chapter semantics remained in the capability,
+  not the agent.
+- For Genesis, the canonical result selected whole chapters 1–3 with null
+  verse endpoints. The final LLM prose presented this as `1:1-3:24`.
+  This elaboration was presentation, not a change to the canonical tool result.
+  Final prose MUST NOT replace the canonical tool result or be parsed back
+  into it.
+
+These observations establish the behavior of this model in this run, not a
+guarantee for other models or future runs. Exact reference-text preservation
+and post-error agent behavior remain model-sensitive. No full transcripts,
+thought signatures, credentials, or invocation identifiers are recorded here.
+
+Offline tests use a scripted `BaseLlm` with the real Agent, Runner, FunctionTool,
+and unchanged capability. They verify the event capture and expected error flow;
+they do not demonstrate autonomous model judgment or exact-text preservation by
+a live LLM. Run ordinary `pytest -v` here: 24 original P0-C1 tests plus the P0-C2
+tests. P0-B remains a separate, unchanged 96-test suite. No new dependencies are
+required. Installed ADK emits its declaration experimental warning and an
+upstream BaseAgentConfig deprecation warning during these tests.

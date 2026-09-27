@@ -19,4 +19,12 @@ SKILL.md, and the shared BiblePassageReference schema before changing this adapt
   forwarding, identity-preserving success, errors, and working-directory changes.
 - Run ordinary pytest in this directory, then the unchanged P0-B suite (96 tests),
   and git diff --check. Do not introduce live model calls or credentials in tests.
-- P0-C does not require agents, runners, manifests, mapping JSON, or new contracts.
+- P0-C2 permits one minimal agent and an ephemeral in-memory session service
+  for the explicit experiment only. No application, memory architecture,
+  manifests, mapping JSON, or new contracts.
+- Keep live calls separate from pytest and require explicit local model/API-key
+  configuration. Never print credentials. Scripted-model tests verify plumbing,
+  not autonomous model behavior.
+- Canonical data is the tool result; final natural-language answers are
+  presentation. Capture user text, model arguments, tool results and final
+  responses separately. Do not repair rewritten model arguments in the adapter.
