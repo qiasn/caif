@@ -101,3 +101,85 @@ that no-tool answers leave canonical results empty, while unsupported
 normalization still retains the adapter error. They do not prove that a live
 model will choose the correct intent. The revised instruction requires a new
 live observation; no live call was made for this change.
+
+## P1-B: controlled Joshua document retrieval
+
+`joshua_document_experiment.py` is a separate experiment; P1-A remains unchanged.
+CKAIS configures the three ignored PDFs and the experimental labels
+`known_source`, `unverified`, `internal`. These are P1-B defaults, not permanent
+church governance policy or access enforcement. Local filesystem paths never
+appear in Citation.uri, which is null.
+
+Dependencies flow from this application to the new ADK document tool, then the
+framework-independent document-retrieval capability and unchanged evidence and
+citation contracts. PDF pages and lexical term overlap are the initial profile,
+not permanent limits of the generic capability. One original PDF page is one
+full-text evidence unit; no OCR, summaries, chunk splitting or model ingestion.
+The in-memory index is rebuilt locally; real source content is never written to
+tracked files. The root ignore rule protects only `data/p1b-corpus/`.
+
+### Requirements/design traceability
+
+The application authorities are the SRS and SDD v2.2 under `docs/`.
+
+| Authority | Exercised now | Simplified/deferred |
+| --- | --- | --- |
+| SRS 2.2, 2.3 | Search fellowship presentation records | Local files instead of upload/portal/authentication |
+| SRS 3.1 | Parse PDF text | Other formats, tagging, inferred metadata deferred |
+| SRS 3.2 and scenario 6 | Surface source evidence for questions | Lexical candidates and source excerpts instead of unrestricted generated answers |
+| SRS 3.4 | Match existing English/Chinese text | No translation, script conversion or cross-language semantic search |
+| SDD Capture/Normalize | Originals unchanged; machine-readable extraction | No OCR, enrichment, production storage or archival durability claims |
+| SDD Provenance & Governance | Source hash and original page locator; explicit labels | No access-control workflow, audits or governance verification |
+| SDD Retrieval & AI Reasoning; Source Preservation | Separate source evidence from generated prose | No vector search, feedback, adaptive memory or synthesized wisdom |
+| SDD Relationship to P1-B | Controlled PDF ingestion/retrieval/citations | Immich/media, dictionary integration, databases and multi-agent work deferred |
+
+### Output and limits
+
+`load_corpus()` requires exactly three local PDFs. `corpus.retrieve(query)` returns
+canonical evidence; `corpus.diagnostics` lists indexed, empty and visibility-
+unsupported pages. `qualify_local_corpus()` returns these diagnostics without
+source content. Empty pages preserve numbering but produce no evidence.
+
+`observe_requests(model, messages, corpus=corpus)` follows P1-A's ADK Runner and
+fresh-session pattern. It keeps tool arguments/responses, evidence, tool errors,
+and `model_presentation` separate. The user-facing `presentation` identifies
+candidate source pages or reports no matches/search failure. Evidence objects
+supply the actual excerpts and citations; raw model prose is diagnostic only,
+never treated as a Joshua answer. No matches cannot turn general model knowledge
+into fellowship evidence. Keyword overlap does not prove a claim is supported;
+this prototype returns source candidates, not a semantic-support guarantee.
+
+Matching uses normalized copies, never edits content. Any overlapping query term
+can match; ranking is deterministic. Contiguous Chinese runs match literally,
+not through segmentation; long Chinese questions may miss results and common
+words can produce irrelevant results. Missing matches do not prove absence from
+the original documents, especially image-only or excluded pages.
+
+### Tests and separate local qualification
+
+Install `applications/CKAIS/requirements.txt` in the existing virtual environment.
+Run ordinary `pytest -v` separately in `capabilities/document-retrieval`,
+`adapters/google-adk`, and `applications/CKAIS`, plus the unchanged Bible suite.
+Synthetic PDFs are created under pytest temporary directories. No real document
+content, extracted index, or fixture is tracked. Real PDFs are not needed for tests.
+
+From this directory, local qualification (no model or network):
+
+```python
+from joshua_document_experiment import qualify_local_corpus
+print(qualify_local_corpus())
+```
+
+To inspect retrieval locally without a model:
+
+```python
+from joshua_document_experiment import load_corpus
+corpus = load_corpus()
+evidence = corpus.retrieve("search terms")
+```
+
+Keep private outputs local and out of Git. Optional model-driven presentation
+requires explicit configuration/authorization and passes retrieved private pages
+to that provider; it is not part of local corpus qualification. No live call is
+performed on import or by tests. Review rendering/extraction fidelity separately:
+pypdf's visibility screening is conservative, not a pixel-level visibility proof.

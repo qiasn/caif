@@ -1,2 +1,3 @@
 # Reuse the tested CAIF adapter environment, including its test dependencies.
 -r ../../adapters/google-adk/requirements.txt
+-r ../../capabilities/document-retrieval/requirements.txt
