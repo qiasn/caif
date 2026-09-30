@@ -38,16 +38,30 @@ def _load_adapter():
 
 _adapter = _load_adapter()
 INSTRUCTION = (
-    'You are the first CKAIS reference-assistance experiment. When asked to '
-    'identify or normalize a Bible reference, call normalize_bible_reference '
-    'with the reference text as supplied. Treat the tool result as authoritative '
-    'structured data and present a brief useful answer. On a tool error, explain '
-    'it and ask for clarification; never invent a corrected reference or success. '
-    'Your final prose is presentation, not canonical data.'
+    'You are the first CKAIS reference-assistance experiment. First decide whether '
+    'the available reference-normalization capability can fulfill the requested task. '
+    'Only when reference normalization or identification itself is requested, call '
+    'normalize_bible_reference with the reference text as supplied. Bible-text '
+    'retrieval, passage explanation or interpretation, sermon retrieval, and other '
+    'operations are unavailable. For a clear unavailable task, briefly state that '
+    'the capability is unavailable; do not call normalization as a substitute or '
+    'supply the missing content from your own knowledge. Treat "What passage is '
+    'Jn 3:16?" and "What does Jn 3:16 say?" as passage-text requests, not requests '
+    'to normalize the reference. For genuinely ambiguous intent, ask what the user '
+    'wants before calling a tool. Treat successful tool results as authoritative '
+    'structured data. On a tool error, explain it and ask for clarification; never '
+    'invent a corrected reference or success. Your final prose is presentation, '
+    'not canonical data.'
 )
+
 EXAMPLES = (
     'Please normalize 約三16',
+    'Normalize Jn 3:16',
     'What passage is Jn 3:16?',
+    'What does Jn 3:16 say?',
+    'Explain Jn 3:16',
+    'Find sermons about Jn 3:16',
+    'Help me with Jn 3:16',
     '請把創世紀1-3章標準化',
     'Normalize Jude 5',
     'Please normalize John 3:16,18',

@@ -9,7 +9,22 @@ import pytest
 
 import ckais_agent as app
 
-SPANS = ('約三16', 'Jn 3:16', '創世紀1-3章', 'Jude 5', 'John 3:16,18')
+NORMALIZATION_CASES = {
+    'Please normalize 約三16': '約三16',
+    'Normalize Jn 3:16': 'Jn 3:16',
+    '請把創世紀1-3章標準化': '創世紀1-3章',
+    'Normalize Jude 5': 'Jude 5',
+    'Please normalize John 3:16,18': 'John 3:16,18',
+}
+UNAVAILABLE_CASES = {
+    'What passage is Jn 3:16?': 'Bible-text retrieval is unavailable in this experiment.',
+    'What does Jn 3:16 say?': 'Bible-text retrieval is unavailable in this experiment.',
+    'Explain Jn 3:16': 'Passage explanation is unavailable in this experiment.',
+    'Find sermons about Jn 3:16': 'Sermon retrieval is unavailable in this experiment.',
+}
+CLARIFICATION_CASES = {
+    'Help me with Jn 3:16': 'Do you want the reference normalized, the passage text, or an explanation?',
+}
 
 
 @pytest.fixture(autouse=True)
@@ -24,6 +39,8 @@ def offline(monkeypatch):
 
 
 class ScriptedModel(BaseLlm):
+    # Fixture decisions are supplied, not inferred: these tests verify the
+    # application boundary, not live-model compliance with the instruction.
     model: str = 'scripted-offline'
 
     async def generate_content_async(self, llm_request, stream=False):
@@ -38,7 +55,11 @@ class ScriptedModel(BaseLlm):
         else:
             message = next(p.text for c in llm_request.contents if c.role == 'user'
                            for p in c.parts or [] if p.text)
-            span = dict(zip(app.EXAMPLES, SPANS))[message]
+            presentation = {**UNAVAILABLE_CASES, **CLARIFICATION_CASES}.get(message)
+            if presentation:
+                yield LlmResponse(content=types.Content(role='model', parts=[types.Part(text=presentation)]))
+                return
+            span = NORMALIZATION_CASES[message]
             yield LlmResponse(content=types.Content(role='model', parts=[types.Part(
                 function_call=types.FunctionCall(name='normalize_bible_reference', args={'raw_reference': span}))]))
 
@@ -51,7 +72,7 @@ def test_exact_existing_tool_and_application_instruction():
         assert semantic not in app.INSTRUCTION
 
 
-@pytest.mark.parametrize('message,span', list(zip(app.EXAMPLES, SPANS)))
+@pytest.mark.parametrize('message,span', list(NORMALIZATION_CASES.items()))
 def test_application_boundary(message, span):
     record, = asyncio.run(app.observe_requests(ScriptedModel(), [message]))
     expected = app._adapter.normalize_bible_reference(span)
@@ -77,7 +98,7 @@ def test_unrelated_working_directory(monkeypatch, tmp_path):
     assert app._load_adapter() is app._adapter
     assert Path(app._adapter.__file__).name == 'bible_reference_tool.py'
     record, = asyncio.run(app.observe_requests(ScriptedModel(), [app.EXAMPLES[0]]))
-    assert record['canonical_results'][0]['payload']['original_text'] == SPANS[0]
+    assert record['canonical_results'][0]['payload']['original_text'] == '約三16'
 
 
 @pytest.mark.parametrize('configuration', [{}, {'CAIF_ADK_MODEL': 'gemini-placeholder'},
@@ -87,3 +108,26 @@ def test_live_preflight(monkeypatch, configuration):
         monkeypatch.setenv(key, value)
     with pytest.raises(RuntimeError):
         asyncio.run(app.run_live_experiment())
+
+
+@pytest.mark.parametrize('message,presentation', list({**UNAVAILABLE_CASES, **CLARIFICATION_CASES}.items()))
+def test_unavailable_or_unclear_intent_has_no_canonical_success(monkeypatch, message, presentation):
+    def forbidden(*args, **kwargs):
+        pytest.fail('Normalization must not substitute for an unavailable or unclear task')
+    monkeypatch.setattr(app._adapter._capability, 'normalize_reference', forbidden)
+    record, = asyncio.run(app.observe_requests(ScriptedModel(), [message]))
+    assert record['user'] == message
+    assert record['tool_calls'] == []
+    assert record['canonical_results'] == []
+    assert record['tool_errors'] == []
+    assert record['presentation'] == [presentation]
+
+
+def test_agent_receives_capability_selection_instruction():
+    instruction = app.create_agent(ScriptedModel()).instruction
+    assert instruction == app.INSTRUCTION
+    for requirement in ('can fulfill the requested task', 'do not call normalization as a substitute',
+                        'genuinely ambiguous intent', 'ask what the user',
+                        'passage-text requests', 'not canonical data'):
+        assert requirement in instruction
+    assert set(app.EXAMPLES) == set(NORMALIZATION_CASES) | set(UNAVAILABLE_CASES) | set(CLARIFICATION_CASES)

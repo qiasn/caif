@@ -52,7 +52,7 @@ pytest -v
 
 Dependencies reference the existing pinned ADK 2.9.2 environment. No new
 libraries are required. Tests use a scripted BaseLlm with the real ADK runner,
-adapter and capability. They cover the five requested inputs, unchanged
+adapter and capability. They cover the normalization and intent-selection inputs, unchanged
 payloads and original_text, and separation of data from presentation. The
 scripted failure response deliberately claims success to verify that even
 misleading model prose cannot manufacture an application canonical result.
@@ -77,9 +77,27 @@ print(json.dumps(asyncio.run(run_live_experiment()), ensure_ascii=False, indent=
 PY
 ```
 
-This explicitly makes model/API calls for the five examples; import and pytest
+This explicitly makes model/API calls for the configured examples; import and pytest
 do not. It reports exact user input, generated tool arguments, canonical payloads
 or errors, and final presentation separately. Inspect text preservation and
 post-error behavior empirically; do not assume deterministic model behavior.
 Live execution was not performed during initial implementation because model
 configuration and API keys were absent from the process environment.
+
+
+## Intent/capability-selection experiment
+
+The application instruction first asks whether normalization can fulfill the
+request. Explicit normalization/identification tasks may use the tool. Passage
+text (including “What passage is Jn 3:16?”), explanation/interpretation, sermons,
+and other unavailable operations receive a brief capability-unavailable response;
+normalization must not substitute for fulfillment. Genuinely ambiguous requests
+receive clarification before tool use. This is an application prompt policy,
+not a router, registry, intent contract, or new CAIF semantic rule.
+
+The live examples include explicit normalization, unavailable tasks, and an
+ambiguous help request. Deterministic tests script those decisions and verify
+that no-tool answers leave canonical results empty, while unsupported
+normalization still retains the adapter error. They do not prove that a live
+model will choose the correct intent. The revised instruction requires a new
+live observation; no live call was made for this change.
